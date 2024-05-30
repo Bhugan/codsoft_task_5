@@ -8,6 +8,7 @@ from sklearn.preprocessing import normalize, StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 import warnings
+
 warnings.filterwarnings("ignore")
 
 # Streamlit app
@@ -68,5 +69,21 @@ if uploaded_file is not None:
     st.write("Classification Report:")
     st.write(pd.DataFrame(report).transpose())
 
+    # Prediction input form
+    st.write("### Make a Prediction")
+    input_data = []
+    for i in range(1, 30):
+        input_val = st.number_input(f"V{i}", value=0.0)
+        input_data.append(input_val)
+    
+    # Normalize and reshape the input data
+    input_data = np.array(input_data).reshape(1, -1)
+    input_data = normalize(input_data, norm="l1")
+    
+    if st.button("Predict"):
+        prediction = RF.predict(input_data)
+        prediction_proba = RF.predict_proba(input_data)
+        st.write(f"Prediction: {'Fraud' if prediction[0] == 1 else 'Not Fraud'}")
+        st.write(f"Prediction Probability: {prediction_proba[0]}")
 else:
     st.write("Please upload a CSV file to continue.")
