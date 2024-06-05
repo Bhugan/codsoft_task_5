@@ -5,8 +5,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize, StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -46,14 +44,16 @@ def main():
 
         # Visualize the data
         st.write("### Class Distribution")
-        sns.countplot(x='Class', data=df)
-        st.pyplot()
+        fig, ax = plt.subplots()
+        sns.countplot(x='Class', data=df, ax=ax)
+        st.pyplot(fig)
 
         # Check the correlation between the columns
         st.write("### Correlation Matrix")
+        fig, ax = plt.subplots(figsize=(10, 8))
         corr = df.corr()
-        sns.heatmap(corr, annot=True)
-        st.pyplot()
+        sns.heatmap(corr, annot=True, ax=ax)
+        st.pyplot(fig)
 
         X_train, X_test, y_train, y_test = preprocess_data(df)
         model = train_model(X_train, y_train)
