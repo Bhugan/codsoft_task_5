@@ -16,7 +16,10 @@ def load_data(file):
     return df
 
 @st.cache
-def preprocess_data(df):
+def preprocess_data(df, nrows):
+    # Trim the data
+    df = df.sample(n=nrows, random_state=42)
+    
     # Standardizing Features by removing the Mean and Scaling to Unit Variance
     df.iloc[:, 1:30] = StandardScaler().fit_transform(df.iloc[:, 1:30])
     data_matrix = df.values
@@ -42,6 +45,10 @@ def main():
         st.write("### Data Preview")
         st.write(df.head())
 
+        # Allow user to select number of rows to use for processing
+        nrows = st.slider("Select number of rows to use for processing", min_value=1000, max_value=len(df), value=10000, step=1000)
+        st.write(f"Using {nrows} rows for processing")
+
         # Visualize the data
         st.write("### Class Distribution")
         fig, ax = plt.subplots()
@@ -55,7 +62,7 @@ def main():
         sns.heatmap(corr, annot=True, ax=ax)
         st.pyplot(fig)
 
-        X_train, X_test, y_train, y_test = preprocess_data(df)
+        X_train, X_test, y_train, y_test = preprocess_data(df, nrows)
         model = train_model(X_train, y_train)
 
         # Evaluation
